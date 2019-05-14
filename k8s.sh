@@ -301,15 +301,17 @@ kube_slave_up()
 kube_reset()
 {
     kubeadm reset
-
-    rm -rf /var/lib/cni /etc/cni/ /run/flannel/subnet.env /etc/kubernetes/kubeadm.conf
+    systemctl stop kubelet
+    systemctl stop docker
+    rm -rf /var/lib/cni /var/lib/kubelet/* /etc/cni/ /run/flannel/subnet.env /etc/kubernetes/kubeadm.conf
 
     # 删除rpm安装包
     yum remove -y kubectl kubeadm kubelet kubernetes-cni socat
 
-    #ifconfig cni0 down
+    ifconfig cni0 down
+    ifconfig flannel.1 down
+    ifconfig docker0 down
     link delete cni0
-    #ifconfig flannel.1 down
     ip link delete flannel.1
 }
 
