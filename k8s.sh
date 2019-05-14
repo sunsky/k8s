@@ -154,7 +154,7 @@ kube_install()
     # net.bridge.bridge-nf-call-ip6tables = 1
     # net.bridge.bridge-nf-call-iptables = 1
     # 设置swappiness参数为0，linux swap空间为0
-    cat >> /etc/sysctl.d/k8s.conf <<EOF
+    cat > /etc/sysctl.d/k8s.conf <<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 vm.swappiness=0
