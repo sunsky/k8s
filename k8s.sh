@@ -157,6 +157,9 @@ kube_install()
     cat >> /etc/sysctl.d/k8s.conf <<EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
 vm.swappiness=0
 EOF
     modprobe br_netfilter
@@ -305,7 +308,7 @@ kube_reset()
     yum remove -y kubectl kubeadm kubelet kubernetes-cni socat
 
     #ifconfig cni0 down
-    ip link delete cni0
+    link delete cni0
     #ifconfig flannel.1 down
     ip link delete flannel.1
 }
