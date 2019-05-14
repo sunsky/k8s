@@ -83,7 +83,11 @@ EOF
     cat > /etc/docker/daemon.json <<EOF
 {
     "registry-mirrors": ["${DOCKER_MIRRORS}"],
-    "graph":"${DOCKER_GRAPH}"
+    "graph":"${DOCKER_GRAPH}",
+    "storage-driver": "overlay2",
+    "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
 }
 EOF
     echo "Config docker success!"
