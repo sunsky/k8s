@@ -1,0 +1,20 @@
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://172.16.114.58:6443
+  name: local-server
+contexts:
+- context:
+    cluster: cms-k8s
+    namespace: cms-k8s
+    user: cms
+  name: default-context
+
+current-context: default-context
+kind: Config
+preferences: {}
+users:
+- name: cms
+  user:
+    username: cmsdev
+    password: password123

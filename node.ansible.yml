@@ -1,0 +1,51 @@
+- hosts: k8s-node
+  remote_user: root
+  sudo: true
+  tasks:
+    - name: git-update
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        if [ ! -n "/data1/ms/k8s/k8s.sh" ]; then
+              git clone 'https://cmsdev:!!Yhb6sqt!!@git.staff.sina.com.cn/cms/backend/k8s.git' .
+        fi
+        git clean -fxd
+        git pull
+      register: out1
+      tags:
+        - git-update
+    - debug: var="out1"
+
+    - name: install-node
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        sh -x k8s.sh --master-address {{ansible_host}}  --node-type node
+      register: install-node
+      tags:
+        - install-node
+    - debug: var="install-node"
+
+    - name: kube_reset
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        sh -x k8s.sh --master-address {{ansible_host}}  --node-type node kube_reset
+      register: kube_reset
+      tags:
+        - kube_reset
+    - debug: var="kube_reset"
+
+    - name: install_kubelet
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        sh -x k8s.sh --master-address {{ansible_host}}  --node-type node install_kubelet
+      register: install_kubelet
+      tags:
+        - install_kubelet
+    - debug: var="install_kubelet"

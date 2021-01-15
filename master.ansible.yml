@@ -1,0 +1,80 @@
+- hosts: k8s-master
+#  remote_user: root
+  tasks:
+    - name: git-update
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        if [ ! -n "/data1/ms/k8s/k8s.sh" ]; then
+              git clone 'https://cmsdev:!!Yhb6sqt!!@git.staff.sina.com.cn/cms/backend/k8s.git' .
+        fi
+        git reset --hard
+        git clean -xfd
+        git pull
+      register: out1
+      tags:
+        - git-update
+    - debug: var="out1"
+    - name: etcd_install
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        sh -x k8s.sh --master-address {{ansible_host}} --node-type master etcd_install
+      register: etcd_install
+      tags:
+        - etcd_install
+    - debug: var="etcd_install"
+
+    - name: kube_reset
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        sh -x k8s.sh --master-address {{ansible_host}} --node-type master kube_reset
+      register: kube_reset
+      tags:
+        - kube_reset
+    - debug: var="kube_reset"
+
+    - name: kube_reset_light
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: |
+        sh -x k8s.sh --master-address {{ansible_host}} --node-type master kube_reset_light
+      register: kube_reset_light
+      tags:
+        - kube_reset_light
+    - debug: var="kube_reset_light"
+
+    - name: install-master
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: sh -x k8s.sh --master-address {{ansible_host}}  --node-type master
+      register: out3
+      tags:
+        - install-master
+    - debug: var="out3.stdout_lines + [ out3.stderr ]"
+
+    - name: install_kubelet
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: sh -x k8s.sh --master-address {{ansible_host}}  --node-type master install_kubelet
+      register: out3
+      tags:
+        - install_kubelet
+    - debug: var="install_kubelet"
+
+    - name: install_base_plugins
+      args:
+        chdir: /data1/ms/k8s
+      become: true
+      shell: sh -x k8s.sh --master-address {{ansible_host}}  --node-type master install_base_plugins
+      register: install_base_plugins
+      tags:
+        - install_base_plugins
+    - debug: var="install_base_plugins"

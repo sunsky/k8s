@@ -1,0 +1,40 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: alertmanager
+  namespace: prometheus
+data:
+  config.yml: |
+    global:
+      resolve_timeout: 30s
+      smtp_smarthost: "smtp.163.com:25"
+      smtp_from: 'xiyanxiyan10@163.com'
+      smtp_auth_username: "xiyanxiyan10@163.com" 
+      smtp_auth_password: "xiyanxiyan10" 
+      smtp_require_tls: false
+
+    route:
+      receiver: mailhook
+      group_wait: 30s
+      group_interval: 1m
+      repeat_interval: 1m
+      group_by: []
+
+      routes:
+      - receiver: mailhook
+        group_wait: 300s
+        group_interval: 1m
+        repeat_interval: 1m
+        group_by: [NodeMemoryUsage, NodeCPUUsage, NodeFilesystemUsage]
+        match:
+          team: node
+
+    templates:
+    - '/etc/mails/*.tmpl'
+    
+    receivers:
+    - name: mailhook
+      email_configs:
+      - to: "xiyanxiyan10@hotmail.com"
+        html: '{{ template "alert.html" . }}'
+        headers: { Subject: "[WARN] Warn Email" }

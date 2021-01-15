@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: List
+items:
+- apiVersion: extensions/v1beta1
+  kind: Ingress
+  metadata:
+    name: ilanni-ingress
+    namespace: ilanni-namespace
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+  spec:
+    rules:
+    - host: ingress.ilanni.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: ilanni-httpd-svc
+            servicePort: 80
+#        - path: /tomcat
+#          backend:
+#            serviceName: ilanni-tomcat-svc
+#            servicePort: 8080

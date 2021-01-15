@@ -1,0 +1,20 @@
+- hosts: k8s-master
+  remote_user: root
+  sudo: True
+
+  tasks:
+  - name: install master
+    shell:
+        cmd: sh -x k8s.sh --master-address 10.79.217.185 --node-type master
+        chdir: /data1/ms/k8s
+
+
+- hosts: k8s-node
+  remote_user: root
+  sudo: True
+
+  tasks:
+  - name: install node
+    shell:
+        cmd: sh -x k8s.sh --master-address 10.79.217.185 --node-type node
+        chdir: /data1/ms/k8s

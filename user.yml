@@ -1,0 +1,11 @@
+kubectl config set-credentials admin --username=admin --password=sinascp
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://172.16.114.58:6443
+  name: admin
+contexts:
+- context:
+    cluster: admin
+    user: admin
+  name: admin

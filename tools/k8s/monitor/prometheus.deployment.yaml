@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: prometheus-deployment
+  name: prometheus
+  namespace: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - image: quay.io/prometheus/prometheus
+        name: prometheus
+        command:
+        - "/bin/prometheus"
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--storage.tsdb.path=/prometheus"
+        - "--storage.tsdb.retention=3h"
+        - "--web.enable-lifecycle"
+          #- "--log.level=debug"  
+        ports:
+        - containerPort: 9090
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/prometheus"
+          name: data
+        - mountPath: "/etc/prometheus"
+          name: config-volume
+        - mountPath: "/etc/rules"
+          name: rules-volume
+        resources:
+          requests:
+            cpu: 100m
+            memory: 2000Mi
+          limits:
+            cpu: 500m
+            memory: 4000Mi
+      serviceAccountName: prometheus
+      imagePullSecrets: 
+        - name: regsecret
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: config-volume
+        configMap:
+          name: prometheus-config 
+      - name: rules-volume
+        configMap:
+          name: rules-config 
